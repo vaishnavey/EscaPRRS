@@ -42,9 +42,9 @@ class VAE_model(nn.Module):
         # Compute or load weights
         if hasattr(data, 'weights') and data.weights is not None:
             self.weights = data.weights
-            print("✅ Loaded sequence weights from dataset")
+            print("Loaded sequence weights from dataset")
         else:
-            print("⚠️ No weights found in dataset, computing using cosine similarity of avg embeddings")
+            print("No weights found in dataset, computing using cosine similarity of avg embeddings")
             avg_embeddings = np.mean(data.one_hot_encoding, axis=1)  # (N, D)
             sim = cosine_similarity(avg_embeddings)
             theta = 0.01
@@ -54,9 +54,8 @@ class VAE_model(nn.Module):
             ])
             self.weights = weights
             data.weights = weights
-            print("✅ Computed and assigned new weights")
-
-            # 👉 Save to file if `data.weights_path` is defined
+            print("Computed and assigned new weights")
+            
             if hasattr(data, 'weights_path'):
                 os.makedirs(os.path.dirname(data.weights_path), exist_ok=True)
                 np.save(data.weights_path, self.weights)
@@ -187,7 +186,7 @@ class VAE_model(nn.Module):
 
         # Check for NaNs
         if torch.isnan(neg_ELBO) or torch.isnan(BCE) or torch.isnan(KLD_latent):
-            print("❌ NaN detected in loss components!")
+            print("NaN detected in loss components!")
             print("BCE:", BCE)
             print("KLD_latent:", KLD_latent)
             print("KLD_global_params:", KLD_decoder_params_normalized)
@@ -440,7 +439,7 @@ class VAE_model(nn.Module):
         if len(valid_mutations) == 0:
             raise ValueError("No valid mutations found. Check your reference sequence and input format.")
 
-        print(f"✅ Found {len(valid_mutations)} valid mutations")
+        print(f"Found {len(valid_mutations)} valid mutations")
 
         # Compute ELBO of WT
         wt_input = torch.tensor(msa_data.one_hot_encoding[0:1], dtype=self.dtype).to(self.device)
