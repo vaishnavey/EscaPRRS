@@ -1,6 +1,6 @@
 ## This is the repository for FLEVO: Fitness Learning from Evolutionary Variants Over time
 ## Overview
-We modified original training scripts from EVE, an unsupervised generative model of mutation effect from broader evolutionary sequences to handle ESM-2 protein language model embeddings to calculate fitness landscape in viral sequences of Porcine Reproductive and Respiratory Syndrome Viral Glycoprotein GP5.
+We modified original training scripts from EVE [training script](https://github.com/OATML-Markslab/EVE/blob/master/train_VAE.py), an unsupervised generative model of mutation effect from broader evolutionary sequences to handle ESM-2 protein language model embeddings to calculate fitness landscape in viral sequences of Porcine Reproductive and Respiratory Syndrome Viral Glycoprotein GP5.
 
 ## Usage
 Computing FLEVO escape score is same as that of EVEscape.
@@ -12,47 +12,29 @@ The components are then standardized and fed into a temperature scaled logistic 
 
 ## Scripts
 We have included python scripts to train the VAE, evaluate evolutionary index for all single point mutations in the training
- - [](scripts/process_protein_data.py) calculates the three EVEscape components 
- - [evescape_scores.py](scripts/evescape_scores.py) creates the final evescape scores and outputs scores and processed DMS data in [summaries_with_scores](./results/summaries_with_scores)
- 
- The scripts folder also contains a python script [score_pandemic_strains.py](scripts/score_pandemic_strains.py) to calculate EVEscape scores for all strains in GISAID. The output strain scores (~150MB unzipped) can be downloaded as follows:
- ```
-curl -o strain_scores_20230318.zip https://marks.hms.harvard.edu/evescape/strain_scores_20230318.zip
-unzip strain_scores_20230318.zip
-rm strain_scores_20230318.zip
-```
-The workflow of the scripts to create the data tables in [results](./results) needed for the main figures of the EVEscape paper is available in [evescape_summary.pdf](./evescape_summary.pdf). Additional data tables are available in the paper supplement. 
-
+We recommend referring the original EVE and EVEscape repositories to follow the steps conveniently.
+A general workflow to calculate escape scores with FLEVO is given in [workflow_FLEVO.ipynb] (workflow_FLEVO.ipynb) with expected outputs.
+  
 ## Data requirements
-
-## Generating EVE scores
-We leverage the original [EVE codebase](https://github.com/OATML-Markslab/EVE) to compute the evolutionary indices used in EVEscape.
-
+The following data files are required to run FLEVO
+Training data: Protein sequences of same length sorted in ascending datetime order in FASTA format
+Dissimilarity metric: Single mutation dissimilarity scores from EVEscape (https://github.com/OATML-Markslab/EVEscape/blob/main/data/aa_properties/dissimilarity_metrics.csv)
+A 3D PDB structure file of the parent protein. (Predicted structures can also be used)
 ### Model training
-The MSAs used to train the EVE models used in this project can be found in the supplemental material of the paper (Data S1). 
-
-We modify the Bayesian VAE [training script](https://github.com/OATML-Markslab/EVE/blob/master/train_VAE.py) to support the following hyperparameter choices in the [MSA_processing](https://github.com/OATML-Markslab/EVE/blob/master/utils/data_utils.py) call:
-- sequence re-weighting in MSA (theta): we choose a value of 0.01 that is better suited to viruses (Hopf et al., Riesselman et al.)
-- fragment filtering (threshold_sequence_frac_gaps): we keep sequences in the MSA that align to at least 50% of the target sequence.
-- position filtering (threshold_focus_cols_frac_gaps): we keep columns with at least 70% coverage, except for SARS-CoV-2 Spike for which we lower the required value to 30% in order to maximally cover experimental positions and significant pandemic sites.
-
-We train 5 independent models with different random seeds.
-
-### Model scoring
-For the 5 independently-trained models, we compute [evolutionary indices](https://github.com/OATML-Markslab/EVE/blob/master/compute_evol_indices.py) sampling 20k times from the approximate posterior distribution (ie., num_samples_compute_evol_indices=20000). 
+A model fasta file (https://github.com/vaishnavey/flevo/blob/main/prrsv_ORF5_GP5.fasta) is provided to train the model.
 
 ## Software requirements
-The entire codebase is written in python. The corresponding environment may be created via conda and the provided [requirements.txt](./requirements.txt) file as follows:
+The entire codebase is written in python. The corresponding environment may be created via conda. Some dependencies and version used are listed in requirements.txt
 ```
 conda config --add channels conda-forge
-conda create --name evescape_env --file requirements.txt
-conda activate evescape_env
+conda create --name flevo_env --file requirements.txt
+conda activate flevo_env
 ```
-The environment installs in minutes.
+Typical install time is 5 minutes
 
 ## Runtime
-After collecting the training data, generating FLEVO escape scores for all single mutations runs in minutes.
+After collecting the training data, generating and visualizing FLEVO escape scores for all single mutations runs in minutes.
 
-## Reference
+
 
 
