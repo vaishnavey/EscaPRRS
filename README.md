@@ -1,11 +1,11 @@
-## This is the repository for FLEVO: Fitness Learning from Evolutionary Variants Over Time
+## This is the repository for FLEVO: Fitness Learning from Evolutionary Variants Over time
 ## Overview
 We modified original training scripts from EVE, an unsupervised generative model of mutation effect from broader evolutionary sequences to handle ESM-2 protein language model embeddings to calculate fitness landscape in viral sequences of Porcine Reproductive and Respiratory Syndrome Viral Glycoprotein GP5.
 
 ## Usage
-Computing FLEVO escape scoe is same as that of EVEscape.
+Computing FLEVO escape score is same as that of EVEscape.
 1. Fitness: Measured as a log likelihood of a sequence with respect to the wild type. This is leart by the Bayesian VAE for input ESM-2 embeddings
-2. Accessibility: calculate WCN from PDB structures of relevant conformations of the viral protein of interest
+2. Accessibility: WCN is calculated from Alphafold predicted 3D structure of PRRSV GP5
 3. Dissimilarity: calculate difference in charge and hydrophobicity between the mutant residue and the wildtype 
 
 The components are then standardized and fed into a temperature scaled logistic function, and we take the the log transform of the product of the 3 terms to obtain final escape scores. 
